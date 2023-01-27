@@ -32,5 +32,18 @@ function it_belongs_to_a_project()
 
         $this->assertTrue($task->fresh()->completed);
     }
+    //fresh ?
+
+    /** @test */
+    function it_can_be_marked_as_incomplete(){
+
+        $task = Task::factory()->create(['completed'=>true]);
+
+        $this->assertTrue($task->completed);
+
+        $task->incomplete();
+
+        $this->assertFalse($task->fresh()->completed);
+    }
 
 }

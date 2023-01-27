@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Facades\Tests\Setup\ProjectFactory;
 use Tests\TestCase;
 
-class ActivityFeedTest extends TestCase
+class TriggerActivityTest extends TestCase
 {
    use RefreshDatabase;
 
@@ -32,7 +32,7 @@ class ActivityFeedTest extends TestCase
 
     }
     /** @test  */
-    function creating_a_new_task_records_project_activity(){
+    function creating_a_new_task(){
         $project = ProjectFactory::create();
 
         $project->addTask('Some Task');
@@ -41,7 +41,7 @@ class ActivityFeedTest extends TestCase
         $this->assertEquals('created_task', $project->activity->last()->description);
     }
     /** @test  */
-    function completing_a_new_task_records_project_activity()
+    function completing_a_task()
     {
         $project = ProjectFactory::withTasks(1)->create();
         $this->actingAs($project->owner)->patch($project->tasks[0]->path(),[
@@ -51,4 +51,40 @@ class ActivityFeedTest extends TestCase
         $this->assertCount(3, $project->activity);
         $this->assertEquals('completed_task', $project->activity->last()->description);
     }
+    /** @test  */
+    function incompleting_a_task()
+    {
+        $project = ProjectFactory::withTasks(1)->create();
+
+        $this->actingAs($project->owner)
+            ->patch($project->tasks[0]->path(),[
+            'body'=>'foobar',
+            'completed'=> true
+        ]);
+        $this->assertCount(3, $project->activity);
+
+        $this->patch($project->tasks[0]->path(),[
+            'body'=>'foobar',
+            'completed'=> false
+        ]);
+        // we use a fresh as we are loading the activity relationship
+        // and here when we call it again, we using the already loaded obj
+        //new query to fetch the activity
+        $project->refresh();
+
+        $this->assertCount(4, $project->activity);
+        $this->assertEquals('incompleted_task', $project->activity->last()->description);
+    }
+    /** @test  */
+    function deleting_a_task()
+{
+    $project = ProjectFactory::withTasks(1)->create();
+
+    $project->tasks[0]->delete();
+
+    // how many pieces of activities  should we have
+    // one for creating a project, one for creating a task, one for deleting a task
+    $this->assertCount(3, $project->activity);
+
+}
 }

@@ -11,9 +11,7 @@ class ProjectTaskController extends Controller
 
     public function store(Project $project)
     {
-        if (auth()->user()->isNot($project->owner)) {
-            abort(403);
-        }
+        $this->authorize('update', $project);
 
         request()->validate(['body' => 'required']);
 
@@ -22,24 +20,36 @@ class ProjectTaskController extends Controller
         return redirect($project->path());
     }
 
-
+    /**
+     * Update the project.
+     *
+     * @param  Project $project
+     * @param  Task    $task
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
     public function update(Project $project, Task $task)
     {
-        if (auth()->user()->isNot($task->project->owner)) {
-            abort(403);
-        }
+        $this->authorize('update', $task->project);
 
-        request()->validate(['body' => 'required']);
-        $task->update(['body'=>\request('body')]);
-        if (\request()->has('completed')){
-            $task->complete();
-        }
-       /* $task->update([
-            'body' => request('body'),
-            'completed' => request()->has('completed')
-        ]);*/
+        $task->update(request()->validate(['body' => 'required']));
+
+        request('completed') ? $task->complete() : $task->incomplete();
 
         return redirect($project->path());
     }
 
+
+
+
+
 }
+/* if (request('completed')){
+           $task->complete();
+       } else {
+           $task->incomplete();
+       }*/
+/* $task->update([
+     'body' => request('body'),
+     'completed' => request()->has('completed')
+ ]);*/

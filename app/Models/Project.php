@@ -32,11 +32,19 @@ class Project extends Model
         return $this->hasMany(Activity::class);
     }
 
-    public function recordActivity($type){
 
-        Activity::create([
+
+
+    public function recordActivity($description){
+        // because we have the activity relation in this class,
+        // we shouldn't use Activity Model directly, instead we do this
+        //and the project_id is assigned automatically, we don't have to type it
+        // we only have to provide a description
+        //compact description = 'description'=>$description
+        $this->activity()->create(compact('description'));
+    /*    Activity::create([
             'project_id'=>$this->id,
             'description'=>$type
-        ]);
+        ]);*/
     }
 }
