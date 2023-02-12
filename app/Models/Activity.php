@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class Activity extends Model
 {
     use HasFactory;
+    protected $casts=[
+      'changes'=>'array'
+    ];
     protected $guarded=[];
     public function subject(): MorphTo
     {

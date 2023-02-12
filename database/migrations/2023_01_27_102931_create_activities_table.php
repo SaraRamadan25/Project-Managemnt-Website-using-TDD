@@ -22,7 +22,7 @@ class CreateActivitiesTable extends Migration
             $table->nullableMorphs('subject'); //it is just make num nullable
             $table->string('description');
             $table->timestamps();
-
+            $table->text('changes')->nullable();
             $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
         });
     }

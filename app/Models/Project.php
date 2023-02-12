@@ -6,12 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Arr;
 
 class Project extends Model
 {
     use HasFactory;
+    use RecordActivity;
     protected $guarded=[];
-
     public function path(): string
     {
         return "/projects/{$this->id}";
@@ -33,17 +34,6 @@ class Project extends Model
     public function addTask($body): Model
     {
         return $this->tasks()->create(compact('body'));
-    }
-
-
-    public function recordActivity($description)
-    {
-        $this->activity()->create(compact('description'));
-    }
-
-    public function activity(): HasMany
-    {
-        return $this->hasMany(Activity::class)->latest();
     }
 
 }

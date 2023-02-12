@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Project;
+use App\Models\User;
 use Facades\Tests\Setup\ProjectFactory;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -75,12 +76,14 @@ class ManageProjectsTest extends TestCase
     }
 
     /** @test */
+
     public function a_user_can_view_their_project()
     {
-        $project = ProjectFactory::create();
+
+    $project = ProjectFactory::create();
 
         $this->actingAs($project->owner)
-            ->get($project->path())
+           ->get($project->path())
             ->assertSee($project->title)
             ->assertSee($project->description);
     }

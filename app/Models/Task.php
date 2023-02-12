@@ -9,15 +9,20 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Task extends Model
 {
+    use RecordActivity;
     use HasFactory;
-protected $guarded=[];
+
+    protected $guarded = [];
 
 //ref any relationships that you want to touch whenever this current instance is updated
-protected $touches=['project'];
+    protected $touches = ['project'];
 // if completed = 0 or 1 ->cast it to boolean
-protected $casts=[
-    'completed' =>'boolean'
-];
+    protected $casts = [
+        'completed' => 'boolean'
+    ];
+
+    protected static array $recordableEvents = ['created', 'deleted'];
+
 
     public function complete()
     {
@@ -40,25 +45,14 @@ protected $casts=[
         return $this->belongsTo(Project::class);
     }
 
-    public function path()
+    public function path(): string
     {
         return "/projects/{$this->project->id}/tasks/{$this->id}";
     }
+}
 
 
-    public function recordActivity($description)
-    {
-        $this->activity()->create([
-            'project_id' => $this->project_id,
-            'description' => $description
-        ]);
-    }
 
-
-    public function activity(): MorphMany
-    {
-        return $this->morphMany(Activity::class, 'subject')->latest();
-    }
 
 
         /*    Activity::create([
@@ -121,5 +115,5 @@ public function incomplete()
                 'description'=>$type
             ]);
     }*/
-}
+
 
