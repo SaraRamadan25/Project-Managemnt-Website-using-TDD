@@ -17,6 +17,9 @@ App\Models\Project::updated(function($project){
 });*/
 
 
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProjectTaskController;
 use App\Models\Project;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -38,24 +41,22 @@ Route::get('/', function () {
 
 
 Route::group(['middleware'=>'auth'],function(){
-    Route::get('/projects',[\App\Http\Controllers\ProjectController::class,'index']);
 
-    Route::post('/projects',[\App\Http\Controllers\ProjectController::class,'store']);
-    Route::get('/projects/create',[\App\Http\Controllers\ProjectController::class,'create']);
+    Route::resource('projects',ProjectController::class);
 
-    Route::get('/projects/{project}',[\App\Http\Controllers\ProjectController::class,'show']);
-    Route::get('/projects/{project}/edit',[\App\Http\Controllers\ProjectController::class,'edit']);
-    Route::patch('/projects/{project}',[\App\Http\Controllers\ProjectController::class,'update']);
+    Route::post('/projects/{project}/tasks',[ProjectTaskController::class,'store']);
 
-    Route::post('/projects/{project}/tasks',[\App\Http\Controllers\ProjectTaskController::class,'store']);
-    Route::patch('/projects/{project}/tasks/{task}', [\App\Http\Controllers\ProjectTaskController::class,'update']);
+    Route::patch('/projects/{project}/tasks/{task}', [ProjectTaskController::class,'update']);
 
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+
 
 });
 
 
+
 Auth::routes();
+
 
 
 

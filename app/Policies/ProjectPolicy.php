@@ -17,7 +17,7 @@ class ProjectPolicy
      * @param  Project $project
      * @return bool
      */
-    public function update(User $user, Project $project)
+    public function update(User $user, Project $project): bool
     {
         return $user->is($project->owner);
     }

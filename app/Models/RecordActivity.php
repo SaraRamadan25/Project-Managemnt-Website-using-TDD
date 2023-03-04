@@ -3,20 +3,16 @@
 
 namespace App\Models;
 
-use App\Models\Activity;
-use App\Models\Project;
-use Illuminate\Support\Arr;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use JetBrains\PhpStorm\ArrayShape;
+use function class_basename;
 
 trait RecordActivity
 {
+    public array $oldAttributes = [];
 
-    public $oldAttributes = [];
-
-    /**
-     * Boot the trait.
-     */
-    public static function bootRecordsActivity()
+    public static function bootRecordActivity()
     {
         foreach (self::recordableEvents() as $event) {
             static::$event(function ($model) use ($event) {
@@ -32,7 +28,7 @@ trait RecordActivity
     }
 
 
-    protected function activityDescription($description)
+    protected function activityDescription(string $description): string
     {
         return "{$description}_" . strtolower(class_basename($this));
     }
@@ -44,13 +40,14 @@ trait RecordActivity
             return static::$recordableEvents;
         }
 
-        return ['created', 'updated', 'deleted'];
+        return ['created', 'updated'];
     }
 
 
     public function recordActivity($description)
     {
         $this->activity()->create([
+            'user_id' => ($this->project ?? $this)->owner->id,
             'description' => $description,
             'changes' => $this->activityChanges(),
             'project_id' => class_basename($this) === 'Project' ? $this->id : $this->project_id
@@ -58,7 +55,7 @@ trait RecordActivity
     }
 
 
-    public function activity(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    public function activity(): MorphMany|HasMany
     {
         if (get_class($this) === Project::class) {
             return $this->hasMany(Activity::class)->latest();
@@ -68,15 +65,15 @@ trait RecordActivity
     }
 
 
-    #[ArrayShape(['before' => "array", 'after' => "array"])] protected function activityChanges()
+    protected function activityChanges()
     {
         if ($this->wasChanged()) {
             return [
-                'before' => Arr::except(
-                    array_diff($this->oldAttributes, $this->getAttributes()), 'updated_at'
+                'before' => array_diff_assoc(
+                    $this->oldAttributes, $this->getAttributes()
                 ),
-                'after' => Arr::except(
-                    $this->getChanges(), 'updated_at'
+                'after' => array_diff_assoc(
+                    $this->getChanges(), ['updated_at' => $this->updated_at]
                 )
             ];
         }
