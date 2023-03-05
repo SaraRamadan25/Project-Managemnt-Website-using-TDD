@@ -13,9 +13,9 @@ class ProjectController extends Controller
 {
     public function index(): Response
     {
-        $projects = auth()->user()->projects;
+        $projects = auth()->user()->accessibleProjects;
 
-        return view('projects.index', compact('projects'));
+        return response()->view('projects.index',compact('projects'));
     }
 
 
@@ -23,7 +23,7 @@ class ProjectController extends Controller
     {
         $this->authorize('update', $project);
 
-        return view('projects.show', compact('project'));
+        return response()->view('projects.show', compact('project'));
     }
 
 
@@ -33,15 +33,12 @@ class ProjectController extends Controller
 
     }
 
-
-
     public function store(): RedirectResponse
     {
         $project = auth()->user()->projects()->create($this->validateRequest());
 
         return redirect($project->path());
     }
-
 
     public function edit(Project $project): Response
     {       //don't know why this solves the error
@@ -54,7 +51,6 @@ class ProjectController extends Controller
 
     public function update(Project $project): RedirectResponse
     {
-
         $this->authorize('update', $project);
 
         $project->update($this->validateRequest());

@@ -52,6 +52,16 @@ class ManageProjectsTest extends TestCase
     }
 
     /** @test */
+function a_user_can_see_all_projects_they_have_been_invited_to_on_their_dashboard(){
+// I want project saved to this variable no matter what ( tap )
+
+    $project = tap(ProjectFactory::create())->invite($this->signIn());
+
+
+    $this->get('/projects')->assertSee($project->title);
+}
+
+    /** @test */
     function a_user_can_delete_a_project(){
 
 $this->withoutExceptionHandling();
@@ -108,7 +118,6 @@ $this->withoutExceptionHandling();
 
     public function a_user_can_view_their_project()
     {
-
     $project = ProjectFactory::create();
 
         $this->actingAs($project->owner)

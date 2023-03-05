@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Project extends Model
@@ -16,7 +17,6 @@ class Project extends Model
     {
         return "/projects/{$this->id}";
     }
-
 
     public function owner(): BelongsTo
     {
@@ -34,5 +34,16 @@ class Project extends Model
     {
         return $this->tasks()->create(compact('body'));
     }
+
+    public function invite(User $user){
+
+         $this->members()->attach($user);
+    }
+public function members() :BelongsToMany
+{
+    // we said members as it much clearer but the base class is user
+    // as each user has many projects and the project can have many users
+        return $this->belongsToMany(User::class,'project_members')->withTimestamps();
+}
 
 }

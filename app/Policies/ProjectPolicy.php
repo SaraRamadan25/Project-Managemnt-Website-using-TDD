@@ -19,6 +19,8 @@ class ProjectPolicy
      */
     public function update(User $user, Project $project): bool
     {
-        return $user->is($project->owner);
+        // either of them when true the project will be normally updated
+        return $user->is($project->owner) || $project->members->contains($user);
+
     }
 }
