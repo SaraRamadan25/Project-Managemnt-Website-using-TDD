@@ -1,5 +1,4 @@
 <?php
-
 namespace Tests\Feature;
 
 use App\Models\Project;
@@ -56,6 +55,8 @@ class ProjectTaskTest extends TestCase
 
         $this->get($project->path())
             ->assertSee('Test task');
+
+        ob_end_clean();
     }
 
     /** @test */

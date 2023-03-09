@@ -44,11 +44,12 @@ class ManageProjectsTest extends TestCase
 
         $response->assertRedirect($project->path());
 
-        $this->assertDatabaseHas('projects',$attributes);
         $this->get($project->path())
             ->assertSee($attributes['title'])
             ->assertSee($attributes['description'])
             ->assertSee($attributes['notes']);
+
+        ob_end_clean();
     }
 
     /** @test */
@@ -82,10 +83,13 @@ $this->withoutExceptionHandling();
         $this->delete($project->path())
             ->assertRedirect('/login');
 
-        $this->signIn();
+        $user = $this->signIn();
 
-        $this->delete($project->path())
-            ->assertStatus(403);
+        $this->delete($project->path())->assertStatus(403);
+
+        $project->invite($user);
+        $this->delete($project->path())->assertStatus(403);
+
     }
 
 

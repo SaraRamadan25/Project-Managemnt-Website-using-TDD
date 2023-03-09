@@ -19,6 +19,7 @@ App\Models\Project::updated(function($project){
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProjectInvitationController;
 use App\Http\Controllers\ProjectTaskController;
 use App\Models\Project;
 use Illuminate\Support\Facades\Auth;
@@ -47,6 +48,8 @@ Route::group(['middleware'=>'auth'],function(){
     Route::post('/projects/{project}/tasks',[ProjectTaskController::class,'store'])->name('projects.tasks.store');
 
     Route::patch('/projects/{project}/tasks/{task}', [ProjectTaskController::class,'update']);
+
+    Route::post('/projects/{project}/invitations',[ProjectInvitationController::class,'store']);
 
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
