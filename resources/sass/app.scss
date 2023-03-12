@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root
+{
+    --page-background-color: #F5F6F9;
+    --card-background-color: white;
+    --button-background-color: #47cdff;
+}

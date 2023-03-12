@@ -22,7 +22,6 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'user_id'
     ];
 
     /**
@@ -34,6 +33,17 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+
     public function projects()
     {
         return $this->hasMany(Project::class,'owner_id')->latest('updated_at');
@@ -45,22 +55,7 @@ return Project::where('owner_id',$this->id)
         $query->where('user_id',$this->id);
     })
     ->get();
-
-       /* $projectsCreated = $this->projects();
-
-        $ids = DB::table('project_members')->where('user_id',$this->id)->pluck('project_id');
-
-        $projectsSharedWith = Project::find($ids);
-
-        return $projectsCreated->merge($projectsSharedWith);*/
     }
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+
 }
