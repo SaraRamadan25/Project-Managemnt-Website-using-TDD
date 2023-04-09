@@ -139,13 +139,22 @@ $this->withoutExceptionHandling();
 
     public function a_user_can_view_their_project()
     {
-    $project = ProjectFactory::create();
+/*        $this->withoutExceptionHandling();*/
 
-        $this->actingAs($project->owner)
-           ->get($project->path())
-            ->assertSee($project->title)
-            ->assertSee($project->description);
+        $project = ProjectFactory::create();
+
+        /*dd($project);*/
+
+         $this->actingAs($project->owner)
+            ->get($project->path())
+
+/*        dd($response->getContent());*/
+
+           ->assertSee($project->title)
+             ->assertSee(($project->description));
+        ob_end_clean();
     }
+
 
     /** @test */
     public function an_authenticated_user_cannot_view_the_projects_of_others()

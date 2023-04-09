@@ -20,14 +20,6 @@ class ProjectTaskController extends Controller
         return redirect($project->path());
     }
 
-    /**
-     * Update the project.
-     *
-     * @param  Project $project
-     * @param  Task    $task
-     * @return \Illuminate\Http\RedirectResponse
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     */
     public function update(Project $project, Task $task)
     {
         $this->authorize('update', $task->project);
@@ -38,10 +30,6 @@ class ProjectTaskController extends Controller
 
         return redirect($project->path());
     }
-
-
-
-
 
 }
 /* if (request('completed')){
